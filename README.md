@@ -68,7 +68,7 @@ You can configure the results directory by modifying `get_results_data_dir()` in
 | :--- | :--- |
 | [optim_basic](./optim_basic/aco_optim.py) | Simulation code of Fig. 3  |
 | [optim_with_noise](./optim_with_noise/aco_optim.py) | Simulation under realistic non-ideal device conditions|
-| [reference+model](./reference_model/refer.py) | Simulation of effective transfer matrix representing circuit-level input-output relationship.
+| [reference_model](./reference_model/refer.py) | Simulation of effective transfer matrix representing circuit-level input-output relationship.
 
 ## Run On Local PC
 
