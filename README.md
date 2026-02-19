@@ -9,6 +9,7 @@ To run these simulations, your environment must meet the following requirements:
 * **HPC Cluster:** Access to a High-Performance Computing cluster.
 * **Job Scheduler:** The cluster must support **IBM Spectrum LSF** (Load Sharing Facility).
 * **Container Runtime:** **Apptainer** (formerly Singularity) must be installed to manage the simulation environment.
+* **Git LFS:** Access to clone larger files like `xyce.sif`.
 
 ## 🚀 Getting Started
 
