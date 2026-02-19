@@ -324,7 +324,7 @@ def sim_memristor_vector_matrix_mul(
     tmp_file_dir=None,
     file_suffix: str = "0",
 ):
-    """生成并模拟一个包含电阻和忆阻器的电路网络。
+    """Simulates vector-matrix multiplication using a memristor crossbar array with SPICE.
 
     Args:
         file_suffix (str):
