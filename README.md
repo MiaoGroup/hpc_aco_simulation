@@ -13,18 +13,26 @@ To run these simulations, your environment must meet the following requirements:
 
 ## 🚀 Getting Started
 
-### 1. Environment
+### Setup Environment
 The simulation runs inside an Apptainer container to ensure consistency across different HPC nodes. 
 
 While the framework supports multiple backends, only the **Xyce** environment (`xyce.sif`) is provided in this open-source repository.
 
-| Backend | Status | File Provided | Tested on HPC |
+| Backend | Status | File Provided | Tested on HPC (Centos 7.9) |
 | :---:| :---: | :---: | :--: |
-| Xyce | ✅ Supported | xyce.sif | ✅ |
-| Ngspice | ✅ Supported | No | ❌ |
+| [Xyce](https://github.com/Xyce/Xyce) | ✅ Supported | xyce.sif | ✅ |
+| [Ngspice](https://ngspice.sourceforge.io/) | ✅ Supported | No | ❌ |
 | Virtuoso | ✅ Supported | No | ❌ |
 
-### 2. Job Submission
+
+In your HPC node, you can use git clone repository (Git LFS required)
+
+```bash
+git clone git@github.com:MiaoGroup/hpc_aco_simulation.git
+cd hpc_aco_simulation
+```
+
+### Job Submission
 > We use `bsub` to submit tasks to the LSF scheduler. 
 
 We provide a pre-configured `bsub` submission script `run_bsub.sh`. Depending on your specific HPC environment, you may need to adjust the node parameters within the script.
@@ -32,13 +40,14 @@ We provide a pre-configured `bsub` submission script `run_bsub.sh`. Depending on
 The current configuration uses the following command:
 
 ```bash
+# other contents
 bsub -q 6330ib -n 56 -o logs/output%J.log apptainer exec --env PYTHONPATH="${PYTHONPATH_VAL}" "${APPTAINER_IMAGE}" python3 "${TEST_FILE}" "${@:2}"
 
 ```
 
-In this example, tasks are submitted to the **6330ib** queue using **56 CPU cores**. Please modify these values to match your cluster's requirements.
+In this example, tasks are submitted to the **6330ib** queue using **56 CPU cores**. Please modify these values in `run_bsub.sh` to match your cluster's requirements.
 
-#### 1. Set Permissions
+#### Set Permissions
 
 After modifying the script, ensure it has the necessary execution permissions:
 
@@ -46,7 +55,7 @@ After modifying the script, ensure it has the necessary execution permissions:
 chmod +x run_bsub.sh
 ```
 
-#### 2. Submit the Job
+#### Submit the Job & Run Simulation Tasks
 
 To submit a task to the HPC node, execute the script followed by the target Python file:
 
@@ -54,11 +63,13 @@ To submit a task to the HPC node, execute the script followed by the target Pyth
 ./run_bsub.sh optim_basic/aco_optim.py
 ```
 
-### 3. Find Results
+### Find Results
 
 By default, the results are stored in `~/hpc_xyce_results`
 
 You can configure the results directory by modifying `get_results_data_dir()` in `lib/path_util.py`.
+
+If jobs is running, you can use LSF command like `bpeek` to capture stdout.
 
 ---
 
@@ -73,3 +84,7 @@ You can configure the results directory by modifying `get_results_data_dir()` in
 ## Run On Local PC
 
 If you have Apptainer, you can run code in your PC using script `run.sh`. Notably, simulation may need many RAM (larger than 100GB).
+
+## References
+
+1. Eric R. Keiter, Richard L. Schiek, Heidi K. Thornquist, Ting Mei, Jason C. Verley, Karthik V. Aadithya, Gary J. Templet, Joshua D. Schickling, Gary L. Hennigan. "Xyce™ Parallel Electronic Simulator." Computer software. October 03, 2013. DOI: 10.11578/dc.20171025.1421.
