@@ -16,7 +16,7 @@ To run these simulations, your environment must meet the following requirements:
 ### Setup Environment
 The simulation runs inside an Apptainer container to ensure consistency across different HPC nodes. 
 
-While the framework supports multiple backends, only the **Xyce** environment (`xyce.sif`) is provided in this open-source repository.
+While the framework supports multiple backends, only the **Xyce** environment (`xyce.sif`) is provided in this open-source repository. For container details, see [Xyce_Container](https://github.com/MiaoGroup/xyce_container)
 
 | Backend | Status | File Provided | Tested on HPC (Centos 7.9) |
 | :---:| :---: | :---: | :--: |
