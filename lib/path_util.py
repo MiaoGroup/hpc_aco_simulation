@@ -12,11 +12,6 @@ def get_results_data_dir():
 
             return data_dir
         else:
-            print(
-                f"Warning: Cannot write to {data_dir}. Falling back to local data directory."
-            )
-            raise PermissionError
-
-    data_dir = os.path.join(current_file_dir, "data")
-    os.makedirs(data_dir, exist_ok=True)
-    return data_dir
+            data_dir = os.path.join(current_file_dir, "data")
+            os.makedirs(data_dir, exist_ok=True)
+            return data_dir
