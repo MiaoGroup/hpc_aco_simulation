@@ -12,6 +12,5 @@ def get_results_data_dir():
 
             return data_dir
         else:
-            data_dir = os.path.join(current_file_dir, "data")
             os.makedirs(data_dir, exist_ok=True)
             return data_dir
