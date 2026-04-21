@@ -97,7 +97,7 @@ def optimization(
         new_written_conductance_matrix = mem_spice.clip_conductance_matrix(
             new_written_conductance_matrix
             - differ_matrix * eta_matrix
-            + _momentum * (differ_matrix - diff_matrix_last),
+            - _momentum * (differ_matrix - diff_matrix_last),
             single_cell_conductance_range=_single_cell_conductance_range,
             low_bound_conductance=_low_bound_conductance,
         )
