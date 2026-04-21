@@ -18,6 +18,7 @@ print(f"Job ID: {jobid}")  # Print the job ID to verify it's being captured corr
 tmp_file_dir = os.path.join(os.getcwd(), ".tmp", jobid)
 os.makedirs(tmp_file_dir, exist_ok=True)
 
+
 def add_uniform_noise_to_conductance_matrix(
     conductance_matrix: np.ndarray,
     g_min: float,
@@ -47,6 +48,7 @@ def add_uniform_noise_to_conductance_matrix(
 
     return noisy_conductance_matrix
 
+
 # def add_noise_to_conductance_matrix(
 #     conductance_matrix: np.ndarray,
 #     _low_bound_conductance: float,
@@ -61,6 +63,7 @@ def add_uniform_noise_to_conductance_matrix(
 #     noisy_conductance_matrix = np.clip(noisy_conductance_matrix, a_min=_low_bound_conductance, a_max=None)
 #     return noisy_conductance_matrix
 
+
 def optimization(
     target_conductance_matrix: np.ndarray,
     _single_cell_conductance_range,
@@ -68,12 +71,12 @@ def optimization(
     _iteration_num,
     noise_coeff: float,
     file_path: str,
+    _momentum=0,  # the coefficients for derivative terms
 ):
     m = target_conductance_matrix.shape[0]
     n = target_conductance_matrix.shape[1]
 
     effective_conductance_matrix_list = []
-    
 
     # include the initial conductance matrix
     new_written_conductance_matrix = np.copy(target_conductance_matrix)
@@ -131,6 +134,8 @@ def optimization(
 
     new_written_conductance_matrix_list.append(new_written_conductance_matrix)
 
+    diff_matrix_last = np.zeros_like(target_conductance_matrix)
+
     for __ in range(1, _iteration_num):
         # get_spice_vmm_output_results
 
@@ -158,7 +163,7 @@ def optimization(
         # update written conductance matrix
         print(f"Iteration {__ + 1}/{_iteration_num}")
         new_written_conductance_matrix = mem_spice.clip_conductance_matrix(
-            new_written_conductance_matrix - differ_matrix * eta_matrix,
+            new_written_conductance_matrix - differ_matrix * eta_matrix  + _momentum * (differ_matrix - diff_matrix_last),
             single_cell_conductance_range=_single_cell_conductance_range,
             low_bound_conductance=_low_bound_conductance,
         )
@@ -170,6 +175,9 @@ def optimization(
         )
         # save the new written conductance matrix
         new_written_conductance_matrix_list.append(new_written_conductance_matrix)
+
+        # update the last differ matrix
+        diff_matrix_last = differ_matrix
 
         # program, no need in simulation
         # program_memristor(new_written_conductance_matrix)

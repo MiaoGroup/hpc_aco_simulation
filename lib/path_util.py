@@ -14,3 +14,5 @@ def get_results_data_dir():
         else:
             os.makedirs(data_dir, exist_ok=True)
             return data_dir
+    else:
+        raise PermissionError(f"Home directory {home_dir} is not writable.")

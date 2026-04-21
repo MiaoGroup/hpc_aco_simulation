@@ -29,6 +29,7 @@ def optimization(
     _iteration_num,
     _beta,
     file_path: str,
+    _momentum: float = 0.0,  # the coefficients for derivative terms
 ):
     m = target_conductance_matrix.shape[0]
     n = target_conductance_matrix.shape[1]
@@ -72,6 +73,8 @@ def optimization(
 
     new_written_conductance_matrix_list.append(new_written_conductance_matrix)
 
+    diff_matrix_last = np.zeros_like(target_conductance_matrix)
+
     for __ in range(1, _iteration_num):
         # get_spice_vmm_output_results
 
@@ -87,17 +90,22 @@ def optimization(
         # update written conductance matrix using pseudo-gradient descent
         differ_matrix = effective_conductance_matrix - target_conductance_matrix
 
-        # decay eta
+        # decay eta, _beta = 1 means no decay, _beta < 1 means decay, _beta > 1 means increase
         eta_matrix = eta_matrix * _beta
         # update written conductance matrix
         print(f"Iteration {__ + 1}/{_iteration_num}")
         new_written_conductance_matrix = mem_spice.clip_conductance_matrix(
-            new_written_conductance_matrix - differ_matrix * eta_matrix,
+            new_written_conductance_matrix
+            - differ_matrix * eta_matrix
+            + _momentum * (differ_matrix - diff_matrix_last),
             single_cell_conductance_range=_single_cell_conductance_range,
             low_bound_conductance=_low_bound_conductance,
         )
         # save the new written conductance matrix
         new_written_conductance_matrix_list.append(new_written_conductance_matrix)
+
+        # update the last differ matrix
+        diff_matrix_last = differ_matrix
 
         # program, no need in simulation
         # program_memristor(new_written_conductance_matrix)
@@ -129,7 +137,7 @@ if len(args) == 2:
     print("Usage: python aco_optim.py <data_index>")
     data_index = int(args[1])
 
-m = 512
+m = 32
 n = m
 
 wire_resistance = 0.35
@@ -144,7 +152,6 @@ iteration_num = 20
 current_file_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-
 # iteration_num = 20
 # beta = 0.99
 
@@ -155,7 +162,7 @@ single_cell_conductance_range = 150e-6
 target_conductance_max = target_conductance_max_dict[m]
 
 target_conductance_matrix = (
-    np.random.random((m, n)) * (target_conductance_max - low_bound_conductance) # type: ignore[operator]
+    np.random.random((m, n)) * (target_conductance_max - low_bound_conductance)  # type: ignore[operator]
     + low_bound_conductance
 )
 
@@ -185,4 +192,5 @@ optimization(
     _iteration_num=iteration_num,
     _beta=1,
     file_path=results_file_path,
+    _momentum=0.001,
 )

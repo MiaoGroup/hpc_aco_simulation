@@ -18,7 +18,7 @@ APPTAINER_IMAGE="xyce.sif"
 # 注意：当在 shell 脚本中引用 $PYTHONPATH 时，如果它可能为空，最好用双引号包围
 # 或者使用 -z 检查并省略冒号。这里我们假设 PYTHONPATH 在执行前可能为空，
 # 所以我们用一个条件表达式来处理。
-PYTHONPATH_VAL="$HOME/hpc_xyce"
+PYTHONPATH_VAL="$PWD"
 # 如果环境变量 PYTHONPATH 已经设置了，就追加；否则只用 ~/hpc_xyce
 if [ -n "$PYTHONPATH" ]; then
     PYTHONPATH_VAL="${PYTHONPATH_VAL}:$PYTHONPATH"
